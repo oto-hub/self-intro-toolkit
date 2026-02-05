@@ -1,0 +1,66 @@
+<div style="font-family: sans-serif; padding: 20px;">
+  <h2>画像カタログ探索機 (ID: 0 〜 1000)</h2>
+  
+  <div style="margin-bottom: 20px;">
+    <button onclick="showPage(0)">0〜99番</button>
+    <button onclick="showPage(100)">100〜199番</button>
+    <button onclick="showPage(200)">200〜299番</button>
+    <button onclick="showPage(300)">300〜399番</button>
+    <button onclick="showPage(400)">400〜499番</button>
+    <button onclick="showPage(500)">500〜1000番(重いので注意)</button>
+  </div>
+  
+  <p id="status">ボタンを押して画像を表示してください...</p>
+  
+  <div id="gallery" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+</div>
+
+<script>
+  const gallery = document.getElementById('gallery');
+  const status = document.getElementById('status');
+
+  function showPage(startID) {
+    // 一度画面をクリア
+    gallery.innerHTML = '';
+    status.innerText = `読み込み中... (ID: ${startID} 〜)`;
+
+    // 範囲の終わりを設定 (500番のボタンだけ一気に1000まで表示)
+    let endID = startID + 99;
+    if (startID === 500) endID = 1000;
+
+    let count = 0;
+
+    for (let i = startID; i <= endID; i++) {
+      const imgUrl = `https://picsum.photos/id/${i}/100/100`;
+      
+      const div = document.createElement('div');
+      div.style.textAlign = "center";
+      
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.style.borderRadius = "4px";
+      img.alt = i;
+      
+      // 画像が存在しない(404エラー)場合は、要素ごと消す
+      img.onerror = function() {
+        div.remove();
+      };
+      
+      // 読み込み完了時
+      img.onload = function() {
+        count++;
+        status.innerText = `表示中: ID ${startID} 〜 ${endID}`;
+      };
+
+      // ID番号のラベル
+      const label = document.createElement('div');
+      label.innerText = `#${i}`; // 番号
+      label.style.fontSize = "10px";
+      label.style.color = "#555";
+
+      div.appendChild(img);
+      div.appendChild(label);
+      gallery.appendChild(div);
+    }
+  }
+</script>
